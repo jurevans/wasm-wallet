@@ -1,0 +1,26 @@
+{
+  "short_name": "WASM Wallet",
+  "name": "WASM Wallet Chrome Extension",
+  "description": "Crypto wallet Chrome extension using WASM and React",
+  "version": "0.1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "./popup.html",
+    "default_icon": {
+      "16": "./images/wallet16.png",
+      "48": "./images/wallet48.png",
+      "128": "./images/wallet128.png"
+    }
+  },
+  "icons": {
+    "16": "./images/wallet16.png",
+    "48": "./images/wallet48.png",
+    "128": "./images/wallet128.png"
+  },
+  "background": {
+    "service_worker": "./background.js"
+  },
+  "options_page": "./options.html",
+  "permissions": ["storage", "tabs", "activeTab"],
+  "host_permissions": ["http://*/*", "https://*/*"]
+}

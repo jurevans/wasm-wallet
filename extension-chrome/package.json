@@ -1,0 +1,50 @@
+{
+  "name": "wasm-wallet-extension-chrome",
+  "version": "0.1.0",
+  "description": "Crypto Wallet - Chrome Extension",
+  "main": "index.js",
+  "author": "Justin R. Evans <jurevans@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "webpack-cli server --mode=development --env development --open --hot",
+    "build": "webpack --mode=production --env production --progress",
+    "lint": "eslint src/**/*.{ts,tsx} --quiet --fix",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "styled-components": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.174",
+    "@types/node": "^17.0.5",
+    "@types/react": "^17.0.38",
+    "@types/react-dom": "^17.0.11",
+    "@types/styled-components": "^5.1.19",
+    "@types/webpack": "^5.28.0",
+    "@types/webpack-dev-server": "^4.5.0",
+    "@typescript-eslint/eslint-plugin": "^5.8.1",
+    "@typescript-eslint/parser": "^5.8.1",
+    "copy-webpack-plugin": "^10.2.0",
+    "eslint": "^8.5.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "fork-ts-checker-webpack-plugin": "^6.5.0",
+    "html-webpack-plugin": "^5.5.0",
+    "prettier": "^2.5.1",
+    "ts-loader": "^9.2.6",
+    "ts-node": "^10.4.0",
+    "tsconfig-paths-webpack-plugin": "^3.5.2",
+    "typescript": "^4.5.4",
+    "webpack": "^5.65.0",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.7.1"
+  },
+  "resolutions": {
+    "styled-components": "^5"
+  }
+}

@@ -1,0 +1,36 @@
+Arguments: 
+  /home/jurev/.nvm/versions/node/v14.17.1/bin/node /home/jurev/.nvm/versions/node/v14.17.1/bin/yarn init
+
+PATH: 
+  /home/jurev/.vscode-server/bin/899d46d82c4c95423fb7e10e68eba52050e30ba3/bin:/home/jurev/bin:/home/jurev/.cargo/bin:/home/jurev/.nvm/versions/node/v14.17.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files/Intel/WiFi/bin/:/mnt/c/Program Files/Common Files/Intel/WirelessCommon/:/mnt/c/Program Files/PuTTY/:/mnt/c/Users/jurev/AppData/Roaming/nvm:/mnt/c/Program Files/nodejs:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files (x86)/Pulse Secure/VC142.CRT/X64/:/mnt/c/Program Files (x86)/Pulse Secure/VC142.CRT/X86/:/mnt/c/Users/jurev/AppData/Local/Android/Sdk/platform-tools:/mnt/c/ProgramData/chocolatey/bin:/mnt/c/Program Files/OpenJDK/openjdk-8u312-b07/bin:/mnt/c/Program Files/Docker/Docker/resources/bin:/mnt/c/ProgramData/DockerDesktop/version-bin:/mnt/c/Users/jurev/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/jurev/AppData/Local/Programs/Microsoft VS Code/bin:/mnt/c/Users/jurev/AppData/Roaming/nvm:/mnt/c/Program Files/nodejs:/mnt/c/Program Files/OpenJDK/openjdk-8u312-b07/bin:/mnt/c/Program Files/apache-maven-3.8.4/bin:/snap/bin:/home/jurev/Android/Sdk/platform-tools:/home/jurev/Android/Sdk/cmdline-tools/tools/bin:/home/jurev/Android/Sdk/platform-tools:/home/jurev/Android/Sdk/cmdline-tools/tools/bin
+
+Yarn version: 
+  1.22.17
+
+Node version: 
+  14.17.1
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: canceled
+      at Interface.<anonymous> (/home/jurev/.nvm/versions/node/v14.17.1/lib/node_modules/yarn/lib/cli.js:137143:13)
+      at Interface.emit (events.js:375:28)
+      at Interface._ttyWrite (readline.js:910:16)
+      at ReadStream.onkeypress (readline.js:235:10)
+      at ReadStream.emit (events.js:375:28)
+      at emitKeys (internal/readline/utils.js:358:14)
+      at emitKeys.next (<anonymous>)
+      at ReadStream.onData (readline.js:1179:36)
+      at ReadStream.emit (events.js:375:28)
+      at addChunk (internal/streams/readable.js:290:12)
+
+npm manifest: 
+  No manifest
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
