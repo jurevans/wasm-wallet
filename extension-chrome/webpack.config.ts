@@ -10,7 +10,7 @@ const webpackConfig = (): Configuration => ({
   entry: {
     popup: './src/popup/index.tsx',
     options: './src/options/index.tsx',
-    background: './src/background/index.ts',
+    service_worker: './src/background/service_worker.ts',
   },
   ...(process.env.production || !process.env.development
     ? {}
@@ -68,6 +68,7 @@ const webpackConfig = (): Configuration => ({
     }),
     new WasmPackPlugin({
       crateDirectory: path.resolve(__dirname, '../wasm'),
+      outDir: path.resolve(__dirname, './pkg'),
     }),
   ],
   experiments: {

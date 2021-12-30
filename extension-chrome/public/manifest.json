@@ -18,7 +18,7 @@
     "128": "./images/wallet128.png"
   },
   "background": {
-    "service_worker": "./background.js"
+    "service_worker": "./service_worker.js"
   },
   "options_page": "./options.html",
   "permissions": ["storage", "tabs", "activeTab"],

@@ -4,7 +4,6 @@
     "moduleResolution": "node",
     "target": "ESNext",
     "removeComments": true,
-    "allowSyntheticDefaultImports": true,
     "jsx": "react",
     "allowJs": true,
     "baseUrl": "src",
@@ -16,8 +15,8 @@
     },
     "lib": ["esnext", "dom", "dom.iterable"],
     "sourceMap": true,
-    "noImplicitAny": false
+    "noImplicitAny": true
   },
-  "exclude": ["node_modules", "build"],
+  "exclude": ["node_modules", "build", "pkg"],
   "include": ["./src", "webpack.config.ts"]
 }
