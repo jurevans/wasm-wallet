@@ -27,6 +27,7 @@
     "@types/webpack-dev-server": "^4.5.0",
     "@typescript-eslint/eslint-plugin": "^5.8.1",
     "@typescript-eslint/parser": "^5.8.1",
+    "@wasm-tool/wasm-pack-plugin": "^1.6.0",
     "copy-webpack-plugin": "^10.2.0",
     "eslint": "^8.5.0",
     "eslint-config-prettier": "^8.3.0",

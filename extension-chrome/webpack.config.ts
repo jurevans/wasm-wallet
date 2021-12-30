@@ -4,6 +4,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
+import WasmPackPlugin from '@wasm-tool/wasm-pack-plugin';
 
 const webpackConfig = (): Configuration => ({
   entry: {
@@ -65,7 +66,13 @@ const webpackConfig = (): Configuration => ({
         { from: 'public/images', to: 'images' },
       ],
     }),
+    new WasmPackPlugin({
+      crateDirectory: path.resolve(__dirname, '../wasm'),
+    }),
   ],
+  experiments: {
+    asyncWebAssembly: true,
+  },
 });
 
 export default webpackConfig;

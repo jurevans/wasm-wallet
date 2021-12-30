@@ -22,5 +22,8 @@
   },
   "options_page": "./options.html",
   "permissions": ["storage", "tabs", "activeTab"],
-  "host_permissions": ["http://*/*", "https://*/*"]
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "content_security_policy": {
+    "extension-pages": "script-src 'self' 'wasm-eval'; object-src 'self'"
+  }
 }
