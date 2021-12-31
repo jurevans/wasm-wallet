@@ -1,30 +1,45 @@
 import wasm from '../../pkg';
 
+interface Data {
+  check?: boolean;
+}
+
+const healthCheck = async (port: chrome.runtime.Port): Promise<void> => {
+  const { health_check } = await wasm;
+  port.postMessage({
+    type: 'healthcheck',
+    response: health_check(),
+  });
+};
+
+const getMnemonic = async (port: chrome.runtime.Port): Promise<void> => {
+  const { generate_mnemonic } = await wasm;
+  const response = generate_mnemonic();
+  port.postMessage({
+    type: 'mnemonic',
+    response: response && response.split(' '),
+  });
+};
+
 chrome.runtime.onInstalled.addListener(async () => {
-  const { loaded_message } = await wasm;
-  loaded_message();
+  const { loaded } = await wasm;
+  loaded();
   console.log('background listener: Extension installed successfully!');
 });
 
-chrome.runtime.onConnect.addListener(async (port) => {
-  const { Wallet } = await wasm;
-  const wallet = Wallet.new();
-
-  if (port.name === 'walkietalkie') {
-    port.onMessage.addListener((msg) => {
-      const { type, data } = msg;
+chrome.runtime.onConnect.addListener((port) => {
+  if (port.name === 'intercom') {
+    port.onMessage.addListener(async (msg) => {
+      const { type, data }: { type: string; data: Data } = msg;
       switch (type) {
-        case 'check':
-          wallet.set_address('TEST_ADDRESS');
-          console.log({ address: wallet.get_address() });
-          console.info({ message: data.check });
-          port.postMessage({
-            type: 'response',
-            response: 'Everything is fine!',
-          });
+        case 'ping':
+          healthCheck(port);
+          break;
+        case 'generate_mnemonic':
+          getMnemonic(port);
           break;
         default:
-          console.log({ msg });
+          console.log({ type, data });
       }
     });
   }
