@@ -20,6 +20,7 @@ interface Props {
 const AddMasterAccountBase: FC<Props> = ({ className }): ReactElement => {
   const [wordList, setMnemonic] = useState([]);
   const [level, setLevel] = useState(Levels.Sufficient);
+  const [passphrase, setPassphrase] = useState('');
   const { port } = useContext(AppContext);
 
   useEffect(() => {
@@ -100,15 +101,14 @@ const AddMasterAccountBase: FC<Props> = ({ className }): ReactElement => {
           </Select>
         </Label>
 
-        <Label>
-          Enter passphrase:
-          <Input type="password" />
-        </Label>
-
-        <Label>
-          Confirm passphrase:
-          <Input type="password" />
-        </Label>
+        <Label>Enter passphrase:</Label>
+        <Input
+          type="password"
+          value={passphrase}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setPassphrase(e.target.value)
+          }
+        />
 
         <div>
           <Button
