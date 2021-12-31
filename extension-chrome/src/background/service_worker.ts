@@ -1,7 +1,8 @@
 import wasm from '../../pkg';
+import { Levels } from 'types';
 
 interface Data {
-  check?: boolean;
+  level?: Levels;
 }
 
 const healthCheck = async (port: chrome.runtime.Port): Promise<void> => {
@@ -12,9 +13,12 @@ const healthCheck = async (port: chrome.runtime.Port): Promise<void> => {
   });
 };
 
-const getMnemonic = async (port: chrome.runtime.Port): Promise<void> => {
+const getMnemonic = async (
+  port: chrome.runtime.Port,
+  level = 16,
+): Promise<void> => {
   const { generate_mnemonic } = await wasm;
-  const response = generate_mnemonic();
+  const response = generate_mnemonic(level);
   port.postMessage({
     type: 'mnemonic',
     response: response && response.split(' '),
@@ -36,7 +40,7 @@ chrome.runtime.onConnect.addListener((port) => {
           healthCheck(port);
           break;
         case 'generate_mnemonic':
-          getMnemonic(port);
+          getMnemonic(port, data.level);
           break;
         default:
           console.log({ type, data });

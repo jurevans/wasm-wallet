@@ -11,6 +11,7 @@ import Button from 'popup/components/Button';
 import styled from 'styled-components';
 import Mnemonic from 'popup/components/Mnemonic';
 import { AppContext } from 'state/context';
+import { Levels } from 'types';
 
 interface Props {
   className?: string;
@@ -18,6 +19,7 @@ interface Props {
 
 const AddMasterAccountBase: FC<Props> = ({ className }): ReactElement => {
   const [wordList, setMnemonic] = useState([]);
+  const [level, setLevel] = useState(Levels.Sufficient);
   const { port } = useContext(AppContext);
 
   useEffect(() => {
@@ -33,10 +35,41 @@ const AddMasterAccountBase: FC<Props> = ({ className }): ReactElement => {
       e.preventDefault();
       port.postMessage({
         type: 'generate_mnemonic',
+        data: {
+          level,
+        },
       });
     },
-    [port],
+    [port, level],
   );
+
+  const handleLevelChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const { value } = e.target;
+      switch (parseInt(value)) {
+        case Levels.Sufficient:
+          setLevel(Levels.Sufficient);
+          break;
+        case Levels.Double:
+          setLevel(Levels.Double);
+          break;
+        case Levels.Paranoid:
+          setLevel(Levels.Paranoid);
+          break;
+        default:
+          setLevel(Levels.Sufficient);
+      }
+    },
+    [],
+  );
+
+  const Select = styled.select`
+    display: block;
+  `;
+
+  const Label = styled.label`
+    display: block;
+  `;
 
   return (
     <div className={className}>
@@ -52,15 +85,37 @@ const AddMasterAccountBase: FC<Props> = ({ className }): ReactElement => {
       )}
 
       <form>
-        <Input type="password" />
-        <Input type="password" />
-        <Button>Create</Button>
+        <Label>
+          Select security level:
+          <Select onChange={handleLevelChange}>
+            <option value="16" selected={level === Levels.Sufficient}>
+              Sufficient
+            </option>
+            <option value="32" selected={level === Levels.Double}>
+              Double
+            </option>
+            <option value="64" selected={level === Levels.Paranoid}>
+              Paranoid
+            </option>
+          </Select>
+        </Label>
+
+        <Label>
+          Enter passphrase:
+          <Input type="password" />
+        </Label>
+
+        <Label>
+          Confirm passphrase:
+          <Input type="password" />
+        </Label>
+
         <div>
           <Button
-            className={'popup-generate-mnemonic'}
+            className={'btn-create-master-account'}
             onClick={handleGenerateMnemonicClick}
           >
-            Generate Mnemonic
+            Create
           </Button>
         </div>
       </form>
