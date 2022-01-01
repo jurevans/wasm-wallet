@@ -6,7 +6,7 @@ import React, {
   useEffect,
   useCallback,
 } from 'react';
-import Input from 'popup/components/Input';
+import { useForm } from 'react-hook-form';
 import Button from 'popup/components/Button';
 import styled from 'styled-components';
 import Mnemonic from 'popup/components/Mnemonic';
@@ -18,31 +18,37 @@ interface Props {
 }
 
 const AddMasterAccountBase: FC<Props> = ({ className }): ReactElement => {
-  const [wordList, setMnemonic] = useState([]);
+  const {
+    register,
+    handleSubmit,
+    setError,
+    clearErrors,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      passphrase: '',
+      confirmPassphrase: '',
+    },
+    criteriaMode: 'all',
+  });
+
+  const [masterAccount, setMasterAccount] = useState({
+    level: 16,
+    mnemonic: '',
+  });
   const [level, setLevel] = useState(Levels.Sufficient);
-  const [passphrase, setPassphrase] = useState('');
   const { port } = useContext(AppContext);
+
+  const { mnemonic } = masterAccount || {};
+  const wordList = mnemonic ? mnemonic.split(' ') : [];
 
   useEffect(() => {
     port.onMessage.addListener(({ type, response }) => {
-      if (type === 'mnemonic') {
-        setMnemonic(response);
+      if (type === 'create_master_account') {
+        setMasterAccount(response);
       }
     });
   }, [port.onMessage]);
-
-  const handleGenerateMnemonicClick = useCallback(
-    (e: MouseEvent) => {
-      e.preventDefault();
-      port.postMessage({
-        type: 'generate_mnemonic',
-        data: {
-          level,
-        },
-      });
-    },
-    [port, level],
-  );
 
   const handleLevelChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -64,6 +70,17 @@ const AddMasterAccountBase: FC<Props> = ({ className }): ReactElement => {
     [],
   );
 
+  const onSubmit = (formValues: any): void => {
+    const { passphrase } = formValues;
+    port.postMessage({
+      type: 'create_master_account',
+      data: {
+        passphrase,
+        level,
+      },
+    });
+  };
+
   const Select = styled.select`
     display: block;
   `;
@@ -71,6 +88,37 @@ const AddMasterAccountBase: FC<Props> = ({ className }): ReactElement => {
   const Label = styled.label`
     display: block;
   `;
+
+  const options = {
+    required: true,
+    validate: {
+      minLength: (value: string) => value.length >= 8,
+    },
+  };
+
+  const validatePassphrase = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    name: 'passphrase' | 'confirmPassphrase',
+  ): void => {
+    const { value } = e.target;
+    if (value.length >= 8) {
+      clearErrors(name);
+    } else {
+      if (value.length > 0) {
+        setError(name, {
+          types: {
+            minLength: 'Must be at least 8 characters!',
+          },
+        });
+      } else {
+        setError(name, {
+          types: {
+            required: 'Password is required!',
+          },
+        });
+      }
+    }
+  };
 
   return (
     <div className={className}>
@@ -85,7 +133,7 @@ const AddMasterAccountBase: FC<Props> = ({ className }): ReactElement => {
         </div>
       )}
 
-      <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Label>
           Select security level:
           <Select onChange={handleLevelChange}>
@@ -102,21 +150,29 @@ const AddMasterAccountBase: FC<Props> = ({ className }): ReactElement => {
         </Label>
 
         <Label>Enter passphrase:</Label>
-        <Input
+        <input
           type="password"
-          value={passphrase}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setPassphrase(e.target.value)
-          }
+          {...register('passphrase', options)}
+          onChange={(e) => {
+            validatePassphrase(e, 'passphrase');
+          }}
         />
+        {<p>{errors.passphrase?.types?.minLength}</p>}
+        {<p>{errors.passphrase?.types?.required}</p>}
+
+        <Label>Confirm passphrase:</Label>
+        <input
+          type="password"
+          {...register('confirmPassphrase', options)}
+          onChange={(e) => {
+            validatePassphrase(e, 'confirmPassphrase');
+          }}
+        />
+        {<p>{errors.confirmPassphrase?.types?.minLength}</p>}
+        {<p>{errors.confirmPassphrase?.types?.required}</p>}
 
         <div>
-          <Button
-            className={'btn-create-master-account'}
-            onClick={handleGenerateMnemonicClick}
-          >
-            Create
-          </Button>
+          <Button className={'btn-create-master-account'}>Create</Button>
         </div>
       </form>
     </div>

@@ -2,6 +2,7 @@ import wasm from '../../pkg';
 import { Levels } from 'types';
 
 interface Data {
+  passphrase?: string;
   level?: Levels;
 }
 
@@ -13,21 +14,22 @@ const healthCheck = async (port: chrome.runtime.Port): Promise<void> => {
   });
 };
 
-const getMnemonic = async (
+const generateMasterAccount = async (
   port: chrome.runtime.Port,
+  passphrase = '',
   level = 16,
 ): Promise<void> => {
-  const { generate_mnemonic } = await wasm;
-  const response = generate_mnemonic(level);
+  const { Master } = await wasm;
+
+  const response: any = Master.new(passphrase, level);
+
   port.postMessage({
-    type: 'mnemonic',
-    response: response && response.split(' '),
+    type: 'create_master_account',
+    response,
   });
 };
 
 chrome.runtime.onInstalled.addListener(async () => {
-  const { loaded } = await wasm;
-  loaded();
   console.log('background listener: Extension installed successfully!');
 });
 
@@ -39,8 +41,8 @@ chrome.runtime.onConnect.addListener((port) => {
         case 'ping':
           healthCheck(port);
           break;
-        case 'generate_mnemonic':
-          getMnemonic(port, data.level);
+        case 'create_master_account':
+          generateMasterAccount(port, data.passphrase, data.level);
           break;
         default:
           console.log({ type, data });
