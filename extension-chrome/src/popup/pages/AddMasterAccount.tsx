@@ -5,13 +5,17 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  Dispatch,
+  SetStateAction,
 } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from 'popup/components/Button';
 import styled from 'styled-components';
 import Mnemonic from 'popup/components/Mnemonic';
 import { AppContext } from 'state/context';
-import { Levels } from 'types';
+import { Levels, LevelType } from 'types';
+import Select from 'popup/components/Select';
+import Error from 'popup/components/Error';
 
 interface Props {
   className?: string;
@@ -33,12 +37,12 @@ const AddMasterAccountBase: FC<Props> = ({ className }): ReactElement => {
   });
 
   const [masterAccount, setMasterAccount] = useState({
-    level: 16,
+    level: Levels.Sufficient,
     mnemonic: '',
   });
-  const [level, setLevel] = useState(Levels.Sufficient);
+  const [level, setLevel]: [LevelType, Dispatch<SetStateAction<Levels>>] =
+    useState(Levels.Sufficient);
   const { port } = useContext(AppContext);
-
   const { mnemonic } = masterAccount || {};
   const wordList = mnemonic ? mnemonic.split(' ') : [];
 
@@ -53,41 +57,32 @@ const AddMasterAccountBase: FC<Props> = ({ className }): ReactElement => {
   const handleLevelChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       const { value } = e.target;
-      switch (parseInt(value)) {
-        case Levels.Sufficient:
-          setLevel(Levels.Sufficient);
-          break;
-        case Levels.Double:
-          setLevel(Levels.Double);
-          break;
-        case Levels.Paranoid:
-          setLevel(Levels.Paranoid);
-          break;
-        default:
-          setLevel(Levels.Sufficient);
-      }
+      console.log({ value });
+      setLevel(parseInt(value));
     },
     [],
   );
 
   const onSubmit = (formValues: any): void => {
-    const { passphrase } = formValues;
-    port.postMessage({
-      type: 'create_master_account',
-      data: {
-        passphrase,
-        level,
-      },
-    });
+    const { passphrase, confirmPassphrase } = formValues;
+
+    if (passphrase !== confirmPassphrase) {
+      setError('confirmPassphrase', {
+        types: {
+          passphraseMismatch: 'Passwords do not match!',
+        },
+      });
+    } else {
+      clearErrors('confirmPassphrase');
+      port.postMessage({
+        type: 'create_master_account',
+        data: {
+          passphrase,
+          level,
+        },
+      });
+    }
   };
-
-  const Select = styled.select`
-    display: block;
-  `;
-
-  const Label = styled.label`
-    display: block;
-  `;
 
   const options = {
     required: true,
@@ -134,42 +129,56 @@ const AddMasterAccountBase: FC<Props> = ({ className }): ReactElement => {
       )}
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Label>
-          Select security level:
-          <Select onChange={handleLevelChange}>
-            <option value="16" selected={level === Levels.Sufficient}>
-              Sufficient
-            </option>
-            <option value="32" selected={level === Levels.Double}>
-              Double
-            </option>
-            <option value="64" selected={level === Levels.Paranoid}>
-              Paranoid
-            </option>
-          </Select>
-        </Label>
+        <div>
+          <label>Select security level:</label>
+          <Select<LevelType>
+            onChange={handleLevelChange}
+            selectedValue={level}
+            options={[
+              {
+                label: 'Sufficient',
+                value: Levels.Sufficient,
+              },
+              {
+                label: 'Double',
+                value: Levels.Double,
+              },
+              {
+                label: 'Paranoid',
+                value: Levels.Paranoid,
+              },
+            ]}
+          />
+        </div>
 
-        <Label>Enter passphrase:</Label>
-        <input
-          type="password"
-          {...register('passphrase', options)}
-          onChange={(e) => {
-            validatePassphrase(e, 'passphrase');
-          }}
-        />
-        {<p>{errors.passphrase?.types?.minLength}</p>}
-        {<p>{errors.passphrase?.types?.required}</p>}
+        <div>
+          <label>Enter passphrase:</label>
+          <input
+            type="password"
+            {...register('passphrase', options)}
+            onChange={(e) => {
+              validatePassphrase(e, 'passphrase');
+            }}
+          />
+          <Error message={errors.passphrase?.types?.minLength} />
+          <Error message={errors.passphrase?.types?.required} />
+        </div>
 
-        <Label>Confirm passphrase:</Label>
-        <input
-          type="password"
-          {...register('confirmPassphrase', options)}
-          onChange={(e) => {
-            validatePassphrase(e, 'confirmPassphrase');
-          }}
-        />
-        {<p>{errors.confirmPassphrase?.types?.minLength}</p>}
-        {<p>{errors.confirmPassphrase?.types?.required}</p>}
+        <div>
+          <label>Confirm passphrase:</label>
+          <input
+            type="password"
+            {...register('confirmPassphrase', options)}
+            onChange={(e) => {
+              validatePassphrase(e, 'confirmPassphrase');
+            }}
+          />
+          <Error message={errors.confirmPassphrase?.types?.minLength} />
+          <Error message={errors.confirmPassphrase?.types?.required} />
+          <Error
+            message={errors.confirmPassphrase?.types?.passphraseMismatch}
+          />
+        </div>
 
         <div>
           <Button className={'btn-create-master-account'}>Create</Button>
