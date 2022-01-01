@@ -1,25 +1,50 @@
 import wasm from '../../pkg';
+import { Levels } from 'types';
+
+interface Data {
+  passphrase?: string;
+  level?: Levels;
+}
+
+const healthCheck = async (port: chrome.runtime.Port): Promise<void> => {
+  const { health_check } = await wasm;
+  port.postMessage({
+    type: 'healthcheck',
+    response: health_check(),
+  });
+};
+
+const generateMasterAccount = async (
+  port: chrome.runtime.Port,
+  passphrase = '',
+  level = 16,
+): Promise<void> => {
+  const { Master } = await wasm;
+  const response = Master.new(passphrase, level);
+
+  port.postMessage({
+    type: 'create_master_account',
+    response,
+  });
+};
 
 chrome.runtime.onInstalled.addListener(async () => {
   console.log('background listener: Extension installed successfully!');
 });
 
-chrome.runtime.onConnect.addListener(async (port) => {
-  if (port.name === 'walkietalkie') {
-    const { Wallet } = await wasm;
-    Wallet.loaded_message();
-    port.onMessage.addListener((msg) => {
-      const { type, data } = msg;
+chrome.runtime.onConnect.addListener((port) => {
+  if (port.name === 'intercom') {
+    port.onMessage.addListener(async (msg) => {
+      const { type, data }: { type: string; data: Data } = msg;
       switch (type) {
-        case 'check':
-          console.info({ message: data.check });
-          port.postMessage({
-            type: 'response',
-            response: 'Everything is fine!',
-          });
+        case 'ping':
+          healthCheck(port);
+          break;
+        case 'create_master_account':
+          generateMasterAccount(port, data.passphrase, data.level);
           break;
         default:
-          console.log({ msg });
+          console.log({ type, data });
       }
     });
   }

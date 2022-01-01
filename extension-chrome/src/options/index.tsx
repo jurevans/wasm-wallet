@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Options from './Options';
 
 ReactDOM.render(
   <React.StrictMode>
-    <div>Options page placeholder</div>
+    <Options />
   </React.StrictMode>,
   document.getElementById('options-root'),
 );
