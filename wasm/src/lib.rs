@@ -1,5 +1,3 @@
-extern crate wasm_bindgen;
-
 mod utils;
 
 use serde::{Serialize,Deserialize};

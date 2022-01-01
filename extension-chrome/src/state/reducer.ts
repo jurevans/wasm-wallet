@@ -37,7 +37,7 @@ export default (state: AppState, action: Actions): AppState => {
           ),
         },
       };
+    default:
+      return state;
   }
-
-  return state;
 };

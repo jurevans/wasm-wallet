@@ -1,8 +1,10 @@
 # WASM Wallet
 
-This project is intended to be a browser-extension front-end to [rust-wallet](https://github.com/rust-bitcoin/rust-wallet), which will run in WebAssembly. See the [notes](#notes) below regarding issues with using `rust-wallet` along with `wasm-bindgen`.
+This project is intended to be a browser-extension front-end (TypeScript, React) to [rust-wallet](https://github.com/rust-bitcoin/rust-wallet), which will run in WebAssembly. See the [notes](#notes) below regarding some issues using `rust-wallet` in conjunction with `wasm-bindgen`. The client (browser extension popup and options pages) communicate with the WASM via a service-worker, with the port being shared to components via the context API. _This is very much a work in progress!_
 
-**NOTE** This is absolutely not for any production use cases at this time.
+At some point it would be nice to see a cross-browser version of the extension, and if nothing else, additional versions of the Chrome extension for other browsers if cross-compatibility is too much of a headache.
+
+**NOTE** This is absolutely _not_ for any production use cases at this time.
 
 ## Chrome extension
 

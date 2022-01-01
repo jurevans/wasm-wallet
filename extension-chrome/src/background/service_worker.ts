@@ -20,8 +20,7 @@ const generateMasterAccount = async (
   level = 16,
 ): Promise<void> => {
   const { Master } = await wasm;
-
-  const response: any = Master.new(passphrase, level);
+  const response = Master.new(passphrase, level);
 
   port.postMessage({
     type: 'create_master_account',
