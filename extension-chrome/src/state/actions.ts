@@ -1,27 +1,15 @@
 import { Account, MasterAccount } from 'types';
 
 export enum ActionType {
-  GetMasterAccount,
   SetMasterAccount,
-  GetAccounts,
   AddAccount,
   RemoveAccount,
   SetShowMnemonic,
 }
 
-export interface GetMasterAccount {
-  type: ActionType.GetMasterAccount;
-  payload: MasterAccount;
-}
-
 export interface SetMasterAccount {
   type: ActionType.SetMasterAccount;
   payload: MasterAccount;
-}
-
-export interface GetAccounts {
-  type: ActionType.GetAccounts;
-  payload: null;
 }
 
 export interface AddAccount {
@@ -40,9 +28,7 @@ export interface SetShowMnemonic {
 }
 
 export type Actions =
-  | GetMasterAccount
   | SetMasterAccount
-  | GetAccounts
   | AddAccount
   | RemoveAccount
   | SetShowMnemonic;

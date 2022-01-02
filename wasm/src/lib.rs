@@ -48,13 +48,6 @@ fn get_security_level(level: u8) -> MasterKeyEntropy {
     }
 }
 
-pub fn get_mnemonic(level: u8) -> String {
-    let security_level = get_security_level(level);
-    let result = Mnemonic::new_random(security_level);
-    let mnemonic = result.unwrap();
-    mnemonic.to_string()
-}
-
 /// Serializable version of bitcoin-wallet MasterAccount
 #[allow(dead_code)]
 #[derive(Serialize, Deserialize)]
@@ -70,8 +63,9 @@ pub struct MasterAccountSerializable {
 #[wasm_bindgen]
 impl MasterAccountSerializable {
     pub fn new(passphrase: &str, level: u8) -> JsValue {
-        let mnemonic_str = get_mnemonic(level);
-        let mnemonic = Mnemonic::from_str(&mnemonic_str);
+        utils::set_panic_hook();
+        let mnemonic_serializable = MnemonicSerializable::new(level);
+        let mnemonic = Mnemonic::from_str(&mnemonic_serializable.mnemonic);
         let master_acc = MasterAccountSerializable::create_master_account(passphrase, mnemonic.unwrap());
         let master_public = master_acc.master_public();
 
@@ -85,10 +79,7 @@ impl MasterAccountSerializable {
         };
 
         let master = MasterAccountSerializable {
-            mnemonic: MnemonicSerializable {
-                level,
-                mnemonic: mnemonic_str,
-            },
+            mnemonic: mnemonic_serializable,
             encrypted: master_acc.encrypted().to_vec(),
             accounts: HashMap::new(),
             master_public: master_public_serializable,
