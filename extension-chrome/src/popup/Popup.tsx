@@ -7,8 +7,9 @@ import React, {
 } from 'react';
 import styled from 'styled-components';
 import reducer from 'state/reducer';
-import AddMasterAccount from './pages/AddMasterAccount';
-import Accounts from './pages/Accounts';
+import AddMasterAccountPage from './pages/AddMasterAccount';
+import AccountsPage from './pages/Accounts';
+import MnemonicPage from './pages/Mnemonic';
 import { initialState } from 'state/state';
 import { AppContext } from 'state/context';
 
@@ -29,7 +30,7 @@ const port = chrome.runtime.connect({ name: 'intercom' });
 
 const Popup: FC = (): ReactElement => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { masterAccount } = state;
+  const { masterAccount, showMnemonic } = state;
 
   const [healthCheck, setHealthCheck] = useState({
     isConnected: false,
@@ -53,9 +54,9 @@ const Popup: FC = (): ReactElement => {
     <AppContext.Provider value={{ state, dispatch, port }}>
       <Wrapper>
         <Heading>Manage Keys</Heading>
-        {/* TODO: Switch following to !masterAccount */}
-        {masterAccount && <AddMasterAccount />}
-        {masterAccount && <Accounts />}
+        {!masterAccount && <AddMasterAccountPage />}
+        {showMnemonic && <MnemonicPage />}
+        {masterAccount && <AccountsPage />}
         {healthCheck.isConnected && <p>Connected to service worker.</p>}
       </Wrapper>
     </AppContext.Provider>

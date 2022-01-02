@@ -1,4 +1,4 @@
-import { Account, MasterAccount } from './state';
+import { Account, MasterAccount } from 'types';
 
 export enum ActionType {
   GetMasterAccount,
@@ -6,6 +6,7 @@ export enum ActionType {
   GetAccounts,
   AddAccount,
   RemoveAccount,
+  SetShowMnemonic,
 }
 
 export interface GetMasterAccount {
@@ -33,9 +34,15 @@ export interface RemoveAccount {
   payload: number;
 }
 
+export interface SetShowMnemonic {
+  type: ActionType.SetShowMnemonic;
+  payload: boolean;
+}
+
 export type Actions =
   | GetMasterAccount
   | SetMasterAccount
   | GetAccounts
   | AddAccount
-  | RemoveAccount;
+  | RemoveAccount
+  | SetShowMnemonic;
