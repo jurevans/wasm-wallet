@@ -1,5 +1,6 @@
 import { Actions, ActionType } from './actions';
-import { Account, AppState } from './state';
+import { AppState } from './state';
+import { Account } from 'types';
 
 export default (state: AppState, action: Actions): AppState => {
   switch (action.type) {
@@ -33,9 +34,14 @@ export default (state: AppState, action: Actions): AppState => {
         masterAccount: {
           ...state.masterAccount,
           accounts: state.masterAccount.accounts.filter(
-            (account: Account) => account.id !== action.payload,
+            (account: Account) => account.account_number !== action.payload,
           ),
         },
+      };
+    case ActionType.SetShowMnemonic:
+      return {
+        ...state,
+        showMnemonic: action.payload,
       };
     default:
       return state;

@@ -1,5 +1,5 @@
 import wasm from '../../pkg';
-import { Levels } from 'types';
+import { Levels, MasterAccount } from 'types';
 
 interface Data {
   passphrase?: string;
@@ -19,12 +19,14 @@ const generateMasterAccount = async (
   passphrase = '',
   level = 16,
 ): Promise<void> => {
-  const { Master } = await wasm;
-  const response = Master.new(passphrase, level);
-
+  const { MasterAccountSerializable } = await wasm;
+  const masterAccount: MasterAccount = MasterAccountSerializable.new(
+    passphrase,
+    level,
+  );
   port.postMessage({
     type: 'create_master_account',
-    response,
+    response: masterAccount,
   });
 };
 

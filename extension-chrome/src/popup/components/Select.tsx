@@ -17,9 +17,13 @@ export default function Select<T>({
   onChange,
 }: Props<T>): ReactElement {
   return (
-    <select onChange={onChange} className={className}>
+    <select
+      onChange={onChange}
+      className={className}
+      value={`${selectedValue}`}
+    >
       {options.map(({ label, value }, i) => (
-        <option selected={value === selectedValue} key={i} value={`${value}`}>
+        <option key={i} value={`${value}`}>
           {label}
         </option>
       ))}

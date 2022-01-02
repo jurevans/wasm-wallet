@@ -9,11 +9,11 @@ import React, {
   SetStateAction,
 } from 'react';
 import { useForm } from 'react-hook-form';
-import Button from 'popup/components/Button';
 import styled from 'styled-components';
-import Mnemonic from 'popup/components/Mnemonic';
 import { AppContext } from 'state/context';
+import { ActionType } from 'state/actions';
 import { Levels, LevelType } from 'types';
+import Button from 'popup/components/Button';
 import Select from 'popup/components/Select';
 import Error from 'popup/components/Error';
 
@@ -21,7 +21,12 @@ interface Props {
   className?: string;
 }
 
-const AddMasterAccountBase: FC<Props> = ({ className }): ReactElement => {
+const AddMasterAccountPageBase: FC<Props> = ({ className }): ReactElement => {
+  const [level, setLevel]: [LevelType, Dispatch<SetStateAction<Levels>>] =
+    useState(Levels.Sufficient);
+  const { port, dispatch } = useContext(AppContext);
+
+  // Setup form validation
   const {
     register,
     handleSubmit,
@@ -36,28 +41,21 @@ const AddMasterAccountBase: FC<Props> = ({ className }): ReactElement => {
     criteriaMode: 'all',
   });
 
-  const [masterAccount, setMasterAccount] = useState({
-    level: Levels.Sufficient,
-    mnemonic: '',
-  });
-  const [level, setLevel]: [LevelType, Dispatch<SetStateAction<Levels>>] =
-    useState(Levels.Sufficient);
-  const { port } = useContext(AppContext);
-  const { mnemonic } = masterAccount || {};
-  const wordList = mnemonic ? mnemonic.split(' ') : [];
-
+  // Update state when receiving a message from service worker
   useEffect(() => {
     port.onMessage.addListener(({ type, response }) => {
       if (type === 'create_master_account') {
-        setMasterAccount(response);
+        dispatch({
+          type: ActionType.SetMasterAccount,
+          payload: response,
+        });
       }
     });
-  }, [port.onMessage]);
+  }, [dispatch, port.onMessage, setError]);
 
   const handleLevelChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       const { value } = e.target;
-      console.log({ value });
       setLevel(parseInt(value));
     },
     [],
@@ -80,6 +78,10 @@ const AddMasterAccountBase: FC<Props> = ({ className }): ReactElement => {
           passphrase,
           level,
         },
+      });
+      dispatch({
+        type: ActionType.SetShowMnemonic,
+        payload: true,
       });
     }
   };
@@ -118,15 +120,6 @@ const AddMasterAccountBase: FC<Props> = ({ className }): ReactElement => {
   return (
     <div className={className}>
       <h1>Add Master Account</h1>
-      {wordList.length > 0 && (
-        <div>
-          <Mnemonic className={'popup-mnemonic'} wordList={wordList} />
-          <p>
-            Copy these to a safe place in order to restore your account should
-            your wallet be corrupted or lost.
-          </p>
-        </div>
-      )}
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
@@ -188,6 +181,6 @@ const AddMasterAccountBase: FC<Props> = ({ className }): ReactElement => {
   );
 };
 
-export default React.memo(styled(AddMasterAccountBase)`
+export default React.memo(styled(AddMasterAccountPageBase)`
   padding: 20px;
 `);
