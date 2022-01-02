@@ -63,6 +63,7 @@ pub struct MasterAccountSerializable {
 #[wasm_bindgen]
 impl MasterAccountSerializable {
     pub fn new(passphrase: &str, level: u8) -> JsValue {
+        utils::set_panic_hook();
         let mnemonic_serializable = MnemonicSerializable::new(level);
         let mnemonic = Mnemonic::from_str(&mnemonic_serializable.mnemonic);
         let master_acc = MasterAccountSerializable::create_master_account(passphrase, mnemonic.unwrap());

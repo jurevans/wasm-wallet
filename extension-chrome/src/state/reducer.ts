@@ -4,19 +4,10 @@ import { Account } from 'types';
 
 export default (state: AppState, action: Actions): AppState => {
   switch (action.type) {
-    case ActionType.GetMasterAccount:
-      return {
-        ...state,
-        ...action.payload,
-      };
     case ActionType.SetMasterAccount:
       return {
         ...state,
         masterAccount: action.payload,
-      };
-    case ActionType.GetAccounts:
-      return {
-        ...state,
       };
     case ActionType.AddAccount:
       const { accounts } = state.masterAccount;
